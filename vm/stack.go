@@ -1,18 +1,28 @@
 package vm
 
-type Stack []uint64
+type Stack struct {
+	data  [20000]uint64
+	index uint32
+}
+
+func MakeStack() *Stack {
+	stack := Stack{index: 0}
+	return &stack
+}
 
 func (stack *Stack) Empty() bool {
-	return len(*stack) == 0
+	return stack.index == 0
 }
 
 func (stack *Stack) Push(value uint64) {
-	*stack = append(*stack, value)
+	stack.data[stack.index] = value
+	stack.index++
 }
 
-func (stack *Stack) Pop() uint64 {
-	index := len(*stack) - 1
-	value := (*stack)[len(*stack)-1]
-	*stack = (*stack)[:index]
-	return value
+func (stack *Stack) Top() uint64 {
+	return stack.data[stack.index-1]
+}
+
+func (stack *Stack) Pop() {
+	stack.index -= 1
 }
