@@ -1,0 +1,3 @@
+Stack virtual machine
+
+Run: go run main.go

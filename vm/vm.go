@@ -72,3 +72,10 @@ func (vm *VM) DebugMemory() {
 		fmt.Printf(" %d", vm.memory[i])
 	}
 }
+
+func (vm *VM) DebugStack() {
+	fmt.Println()
+	for i := 0; i < 10; i++ {
+		fmt.Printf(" %d", vm.cpu.stack.data[i])
+	}
+}

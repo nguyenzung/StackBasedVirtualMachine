@@ -23,6 +23,8 @@ func (stack *Stack) Top() uint64 {
 	return stack.data[stack.index-1]
 }
 
-func (stack *Stack) Pop() {
+func (stack *Stack) Pop() uint64 {
+	result := stack.data[stack.index-1]
 	stack.index -= 1
+	return result
 }
