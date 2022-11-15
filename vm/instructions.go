@@ -9,8 +9,8 @@ var (
 	POP    uint8 = 0x00
 	PUSH   uint8 = 0x01
 	ADD    uint8 = 0x04
-	SUB    uint8 = 0x05
-	MUL    uint8 = 0x06 // stack[i - 1] = stack[i - 1] - stack[i]
+	SUB    uint8 = 0x05 // stack[i - 1] = stack[i - 1] - stack[i]
+	MUL    uint8 = 0x06
 	DIV    uint8 = 0x07
 	AND    uint8 = 0x08
 	OR     uint8 = 0x09
@@ -23,10 +23,14 @@ var (
 	GTE    uint8 = 0x10 // stack[i - 1] >= stack[i]
 	EQ     uint8 = 0x11 // stack[i - 1] == stack[i]
 	SHL    uint8 = 0x12 // Shift left
-	SHR    uint8 = 0x13 // Shift left
+	SHR    uint8 = 0x13 // Shift right
 	FLIP   uint8 = 0x14 // Flip all bits
 	INC    uint8 = 0x20
 	DEC    uint8 = 0x21
+	MOD    uint8 = 0x22
+	POW    uint8 = 0x23
+	IMUL   uint8 = 0x24
+	IDIV   uint8 = 0x25
 	DUP    uint8 = 0x38
 	SWAP   uint8 = 0x39
 	LOAD   uint8 = 0x40 // Load from memory that point by stack[i]
@@ -39,9 +43,12 @@ var (
 	JMP    uint8 = 0xA0 // Unconditinal jump
 	JN     uint8 = 0xA1 // Jump if negative
 	JP     uint8 = 0xA2 // Jump if positive
-	JZ     uint8 = 0xA3 // Jump if zero
-	JLE    uint8 = 0xA4 // Jump if less or equal 0
-	JGE    uint8 = 0xA5 // Jump if greater or equal 0
+	JE     uint8 = 0xA3 // Jump if zero
+	JNE    uint8 = 0xA4
+	JLT    uint8 = 0xA5 // Jump if less than 0
+	JGT    uint8 = 0xA6 // Jump if greater than 0
+	JLE    uint8 = 0xA7 // Jump if less or equal 0
+	JGE    uint8 = 0xA8 // Jump if greater or equal 0
 )
 
 func MakePOP() uint64 {
@@ -67,6 +74,234 @@ func MakeADD() uint64 {
 
 func MakeSUB() uint64 {
 	var opcode uint64 = uint64(SUB)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeMUL() uint64 {
+	var opcode uint64 = uint64(MUL)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeDIV() uint64 {
+	var opcode uint64 = uint64(DIV)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeMOD() uint64 {
+	var opcode uint64 = uint64(MOD)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeAND() uint64 {
+	var opcode uint64 = uint64(AND)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeOR() uint64 {
+	var opcode uint64 = uint64(OR)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeXOR() uint64 {
+	var opcode uint64 = uint64(XOR)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeNOT() uint64 {
+	var opcode uint64 = uint64(NOT)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeLT() uint64 {
+	var opcode uint64 = uint64(LT)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeGT() uint64 {
+	var opcode uint64 = uint64(GT)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeLTE() uint64 {
+	var opcode uint64 = uint64(LTE)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeGTE() uint64 {
+	var opcode uint64 = uint64(GTE)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeEQ() uint64 {
+	var opcode uint64 = uint64(EQ)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeSHL() uint64 {
+	var opcode uint64 = uint64(SHL)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeSHR() uint64 {
+	var opcode uint64 = uint64(SHR)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeFLIP() uint64 {
+	var opcode uint64 = uint64(FLIP)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeINC() uint64 {
+	var opcode uint64 = uint64(INC)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeDEC() uint64 {
+	var opcode uint64 = uint64(DEC)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakePOW() uint64 {
+	var opcode uint64 = uint64(POW)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeIMUL() uint64 {
+	var opcode uint64 = uint64(IMUL)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeIDIV() uint64 {
+	var opcode uint64 = uint64(IDIV)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeDUP() uint64 {
+	var opcode uint64 = uint64(DUP)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeSWAP() uint64 {
+	var opcode uint64 = uint64(SWAP)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeLOAD() uint64 {
+	var opcode uint64 = uint64(LOAD)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeSTORE() uint64 {
+	var opcode uint64 = uint64(STORE)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeSLOAD() uint64 {
+	var opcode uint64 = uint64(SLOAD)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeSSTORE() uint64 {
+	var opcode uint64 = uint64(SSTORE)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeCALL() uint64 {
+	var opcode uint64 = uint64(CALL)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeRET() uint64 {
+	var opcode uint64 = uint64(RET)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeTIME() uint64 {
+	var opcode uint64 = uint64(TIME)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeJMP() uint64 {
+	var opcode uint64 = uint64(JMP)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeJP() uint64 {
+	var opcode uint64 = uint64(JP)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeJN() uint64 {
+	var opcode uint64 = uint64(JN)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeJLT() uint64 {
+	var opcode uint64 = uint64(JLT)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeJGT() uint64 {
+	var opcode uint64 = uint64(JGT)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeJE() uint64 {
+	var opcode uint64 = uint64(JE)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeJNE() uint64 {
+	var opcode uint64 = uint64(JNE)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeJLE() uint64 {
+	var opcode uint64 = uint64(JLE)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeJGE() uint64 {
+	var opcode uint64 = uint64(JGE)
 	opcode = opcode << 56
 	return opcode
 }
