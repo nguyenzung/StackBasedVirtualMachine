@@ -8,7 +8,8 @@ import (
 type CPU struct {
 	vm    *VM
 	stack *Stack
-	ip    uint32
+	ip    uint64
+	hlt   bool
 }
 
 func MakeCPU(vm *VM) *CPU {
@@ -17,10 +18,10 @@ func MakeCPU(vm *VM) *CPU {
 }
 
 func (cpu *CPU) Run() {
-	steps := 10
+	steps := 20
 	counter := 0
 	idleTime := 1
-	for {
+	for !cpu.hlt {
 		instruction := cpu.fetch()
 		opcode, operand := cpu.decode(instruction)
 		cpu.exec(opcode, operand)
@@ -54,10 +55,27 @@ func (cpu *CPU) exec(opcode uint8, operand uint64) {
 	switch opcode {
 	case PUSH:
 		cpu.processPush(operand)
+	case POP:
+		cpu.processPop()
 	case ADD:
 		cpu.processAdd()
+	case SUB:
+		cpu.processSub()
+	case MUL:
+		cpu.processMul()
+	case DIV:
+		cpu.processDiv()
+	case MOD:
+		cpu.processMod()
+	case DUP:
+		cpu.processDup()
+	case SWAP:
+		cpu.processSwap()
+	case JMP:
+		cpu.processJmp()
+
 	default:
-		break
+		cpu.stop()
 	}
 }
 
@@ -65,8 +83,61 @@ func (cpu *CPU) processPush(value uint64) {
 	cpu.stack.Push(value)
 }
 
+func (cpu *CPU) processPop() {
+	cpu.stack.Pop()
+}
+
 func (cpu *CPU) processAdd() {
-	a := cpu.stack.Pop()
 	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
 	cpu.stack.Push(a + b)
+}
+
+func (cpu *CPU) processSub() {
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	cpu.stack.Push(a - b)
+}
+
+func (cpu *CPU) processMul() {
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	cpu.stack.Push(a * b)
+}
+
+func (cpu *CPU) processDiv() {
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	cpu.stack.Push(a / b)
+}
+
+func (cpu *CPU) processMod() {
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	cpu.stack.Push(a % b)
+}
+
+func (cpu *CPU) processDup() {
+	a := cpu.stack.Top()
+	cpu.stack.Push(a)
+}
+
+func (cpu *CPU) processSwap() {
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	cpu.stack.Push(b)
+	cpu.stack.Push(a)
+}
+
+func (cpu *CPU) processJmp() {
+	a := cpu.stack.Pop()
+	cpu.setPC(a)
+}
+
+func (cpu *CPU) setPC(value uint64) {
+	cpu.ip = value
+}
+
+func (cpu *CPU) stop() {
+	cpu.hlt = true
 }

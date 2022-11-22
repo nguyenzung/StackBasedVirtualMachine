@@ -50,9 +50,9 @@ func (vm *VM) loadRom() {
 	}
 }
 
-func (vm *VM) LoadInstruction(index uint32) uint64 {
+func (vm *VM) LoadInstruction(index uint64) uint64 {
 	var code uint64 = 0
-	var i uint32
+	var i uint64
 	for i = 0; i < 8; i++ {
 		code = code << 8
 		code = code | uint64(vm.memory[index*8+i])

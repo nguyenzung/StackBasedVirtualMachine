@@ -6,8 +6,8 @@ package vm
 *	Next 56 bits used for operand
  */
 var (
-	POP    uint8 = 0x00
-	PUSH   uint8 = 0x01
+	POP    uint8 = 0x01
+	PUSH   uint8 = 0x02
 	ADD    uint8 = 0x04
 	SUB    uint8 = 0x05 // stack[i - 1] = stack[i - 1] - stack[i]
 	MUL    uint8 = 0x06
