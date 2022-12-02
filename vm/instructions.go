@@ -44,11 +44,11 @@ var (
 	JN     uint8 = 0xA1 // Jump if negative
 	JP     uint8 = 0xA2 // Jump if positive
 	JE     uint8 = 0xA3 // Jump if zero
-	JNE    uint8 = 0xA4
-	JLT    uint8 = 0xA5 // Jump if less than 0
-	JGT    uint8 = 0xA6 // Jump if greater than 0
-	JLE    uint8 = 0xA7 // Jump if less or equal 0
-	JGE    uint8 = 0xA8 // Jump if greater or equal 0
+	JNE    uint8 = 0xA4 // Jump if not zero
+	JLT    uint8 = 0xA5 // Jump to stack[i] if stack[i-2] less than stack[i-1]
+	JGT    uint8 = 0xA6 // Jump to stack[i] if stack[i-2] greater than stack[i-1]
+	JLE    uint8 = 0xA7 // Jump to stack[i] if stack[i-2] less or equal stack[i-1]
+	JGE    uint8 = 0xA8 // Jump to stack[i] if stack[i-2] greater or equal stack[i-1]
 )
 
 func MakePOP() uint64 {
