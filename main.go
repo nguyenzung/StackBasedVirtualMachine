@@ -30,7 +30,16 @@ func main() {
 	myVM.AddInstruction(vm.MakePUSH(14))  // 11
 	myVM.AddInstruction(vm.MakeJMP())     // 12
 	myVM.AddInstruction(vm.MakePUSH(24))  // 13
-	myVM.AddInstruction(vm.MakePUSH(16))  // 14
+	myVM.AddInstruction(vm.MakePUSH(15))  // 14
+	myVM.AddInstruction(vm.MakePUSH(15))  // 15
+	myVM.AddInstruction(vm.MakeXOR())     // 16
+	myVM.AddInstruction(vm.MakePUSH(0))   // 17
+	myVM.AddInstruction(vm.MakeAND())     // 18
+	myVM.AddInstruction(vm.MakePUSH(1))   // 19
+	myVM.AddInstruction(vm.MakeOR())      // 20
+	myVM.AddInstruction(vm.MakeADD())     // 21
+	myVM.AddInstruction(vm.MakeOR())      // 22
+	myVM.AddInstruction(vm.MakePUSH(13))  // 23
 
 	myVM.DebugRom()
 	myVM.StartVM()

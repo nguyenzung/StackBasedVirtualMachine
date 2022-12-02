@@ -2,6 +2,7 @@ package vm
 
 import (
 	"fmt"
+	"math"
 	"time"
 )
 
@@ -18,7 +19,7 @@ func MakeCPU(vm *VM) *CPU {
 }
 
 func (cpu *CPU) Run() {
-	steps := 20
+	steps := 30
 	counter := 0
 	idleTime := 1
 	for !cpu.hlt {
@@ -67,12 +68,28 @@ func (cpu *CPU) exec(opcode uint8, operand uint64) {
 		cpu.processDiv()
 	case MOD:
 		cpu.processMod()
+	case AND:
+		cpu.processAnd()
+	case OR:
+		cpu.processOr()
+	case XOR:
+		cpu.processXor()
+	case NOT:
+		cpu.processNot()
 	case DUP:
 		cpu.processDup()
 	case SWAP:
 		cpu.processSwap()
 	case JMP:
 		cpu.processJmp()
+	case JN:
+		cpu.processJN()
+	case JP:
+		cpu.processJP()
+	case JE:
+		cpu.processJE()
+	case JNE:
+		cpu.processJNE()
 
 	default:
 		cpu.stop()
@@ -117,6 +134,29 @@ func (cpu *CPU) processMod() {
 	cpu.stack.Push(a % b)
 }
 
+func (cpu *CPU) processAnd() {
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	cpu.stack.Push(a & b)
+}
+
+func (cpu *CPU) processOr() {
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	cpu.stack.Push(a | b)
+}
+
+func (cpu *CPU) processXor() {
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	cpu.stack.Push(a ^ b)
+}
+
+func (cpu *CPU) processNot() {
+	a := cpu.stack.Pop()
+	cpu.stack.Push(math.MaxUint64 ^ a)
+}
+
 func (cpu *CPU) processDup() {
 	a := cpu.stack.Top()
 	cpu.stack.Push(a)
@@ -130,8 +170,44 @@ func (cpu *CPU) processSwap() {
 }
 
 func (cpu *CPU) processJmp() {
+	ip := cpu.stack.Pop()
+	cpu.setPC(ip)
+}
+
+func (cpu *CPU) processJN() {
+	ip := cpu.stack.Pop()
 	a := cpu.stack.Pop()
-	cpu.setPC(a)
+	a = a >> 63
+	if a == 1 {
+		cpu.setPC(ip)
+	}
+}
+
+func (cpu *CPU) processJP() {
+	ip := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	a = a >> 63
+	if a == 0 {
+		cpu.setPC(ip)
+	}
+}
+
+func (cpu *CPU) processJE() {
+	ip := cpu.stack.Pop()
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	if a == b {
+		cpu.setPC(ip)
+	}
+}
+
+func (cpu *CPU) processJNE() {
+	ip := cpu.stack.Pop()
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	if a != b {
+		cpu.setPC(ip)
+	}
 }
 
 func (cpu *CPU) setPC(value uint64) {

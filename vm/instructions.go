@@ -22,9 +22,8 @@ var (
 	LTE    uint8 = 0x0F // stack[i - 1] <= stack[i]
 	GTE    uint8 = 0x10 // stack[i - 1] >= stack[i]
 	EQ     uint8 = 0x11 // stack[i - 1] == stack[i]
-	SHL    uint8 = 0x12 // Shift left
-	SHR    uint8 = 0x13 // Shift right
-	FLIP   uint8 = 0x14 // Flip all bits
+	SHL    uint8 = 0x12 // Shift left stack[i] by stack[i-1] bits
+	SHR    uint8 = 0x13 // Shift right stack[i] by stack[i-1] bits
 	INC    uint8 = 0x20
 	DEC    uint8 = 0x21
 	MOD    uint8 = 0x22
@@ -158,12 +157,6 @@ func MakeSHL() uint64 {
 
 func MakeSHR() uint64 {
 	var opcode uint64 = uint64(SHR)
-	opcode = opcode << 56
-	return opcode
-}
-
-func MakeFLIP() uint64 {
-	var opcode uint64 = uint64(FLIP)
 	opcode = opcode << 56
 	return opcode
 }
