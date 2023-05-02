@@ -3,6 +3,9 @@ package vm
 import (
 	"fmt"
 	"testing"
+	"time"
+
+	"bou.ke/monkey"
 )
 
 type TestCase struct {
@@ -61,5 +64,26 @@ func TestAdd(t *testing.T) {
 
 func TestSub(t *testing.T) {
 	// tests :=
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(35))
+	testCase.AddStep(MakePUSH(15))
+	testCase.AddStep(MakeSUB())
+	testCase.AddStep(MakePUSH(10))
+	testCase.AddStep(MakeSUB())
+	testCase.AddStackTest(0, 10)
+	testCase.Assert()
 	fmt.Println("Testsub")
+}
+
+func TestTIME(t *testing.T) {
+	Now := func() time.Time {
+		return time.Date(2023, 04, 30, 20, 0, 0, 0, time.UTC)
+	}
+	monkey.Patch(time.Now, Now)
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(35))
+	testCase.AddStep(MakeTIME())
+	testCase.AddStackTest(1, uint64(Now().UnixMilli()))
+	testCase.Assert()
+	fmt.Println("Testtime")
 }

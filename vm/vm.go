@@ -42,7 +42,7 @@ func (vm *VM) StartVM() {
 }
 
 func (vm *VM) loadRom() {
-	fmt.Println("Load ROM")
+	// fmt.Println("Load ROM")
 	for i := 0; i < len(vm.rom); i++ {
 		for j := 0; j < 8; j++ {
 			vm.memory[i*8+j] = 0xff & uint8(vm.rom[i]>>((7-j)*8))
