@@ -47,16 +47,15 @@ func (testCase *TestCase) Assert() {
 }
 
 func TestAdd(t *testing.T) {
-	// tests :=
-	fmt.Println("TestAdd")
 	testCase := MakeTestCase(t)
-	testCase.AddStep(MakePUSH(5))
-	testCase.AddStep(MakePUSH(13))
-	testCase.AddStep(MakePUSH(7))
-	testCase.AddStep(MakeADD())
-	testCase.AddStep(MakePUSH(7))
-	testCase.AddStep(MakeADD())
-	testCase.AddStackTest(0, 18)
+	testCase.AddStep(MakePUSH(5))  // 1
+	testCase.AddStep(MakePUSH(13)) // 2
+	testCase.AddStep(MakePUSH(7))  // 3
+	testCase.AddStep(MakeADD())    // 4
+	testCase.AddStep(MakePUSH(1))  // 5
+	testCase.AddStep(MakeADD())    // 6
+	testCase.AddStackTest(0, 5)
+	testCase.AddStackTest(1, 21)
 	testCase.Assert()
 }
 

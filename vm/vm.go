@@ -26,7 +26,7 @@ func MakeVM(memorySize uint32) *VM {
 
 func (vm *VM) AddInstruction(instruction uint64) {
 	vm.rom = append(vm.rom, instruction)
-	fmt.Println(len(vm.rom))
+	// fmt.Println(len(vm.rom))
 	if len(vm.rom) > int(defaulRomSize) {
 		panic("Exceed ROM size")
 	}
