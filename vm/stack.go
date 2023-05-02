@@ -14,6 +14,10 @@ func (stack *Stack) Empty() bool {
 	return stack.index == 0
 }
 
+func (stack *Stack) Reset() {
+	stack.index = 0
+}
+
 func (stack *Stack) Push(value uint64) {
 	stack.data[stack.index] = value
 	stack.index++

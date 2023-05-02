@@ -1,7 +1,6 @@
 package vm
 
 import (
-	"fmt"
 	"math"
 	"time"
 )
@@ -51,8 +50,7 @@ func (cpu *CPU) decode(instruction uint64) (uint8, uint64) {
 }
 
 func (cpu *CPU) exec(opcode uint8, operand uint64) {
-	fmt.Println("Exec instruction", opcode, operand)
-
+	// fmt.Println("Exec instruction", opcode, operand)
 	switch opcode {
 	case PUSH:
 		cpu.processPush(operand)
