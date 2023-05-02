@@ -38,7 +38,9 @@ var (
 	SSTORE uint8 = 0x61
 	CALL   uint8 = 0x80
 	RET    uint8 = 0x81
+	HLT    uint8 = 0x85
 	TIME   uint8 = 0x86
+	SPACE  uint8 = 0x87 // Load available RAM index after ROM
 	JMP    uint8 = 0xA0 // Unconditinal jump
 	JN     uint8 = 0xA1 // Jump if negative
 	JP     uint8 = 0xA2 // Jump if positive
@@ -235,6 +237,18 @@ func MakeCALL() uint64 {
 
 func MakeRET() uint64 {
 	var opcode uint64 = uint64(RET)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeHLT() uint64 {
+	var opcode uint64 = uint64(HLT)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeSPACE() uint64 {
+	var opcode uint64 = uint64(SPACE)
 	opcode = opcode << 56
 	return opcode
 }
