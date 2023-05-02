@@ -90,6 +90,8 @@ func (cpu *CPU) exec(opcode uint8, operand uint64) {
 		cpu.processJE()
 	case JNE:
 		cpu.processJNE()
+	case TIME:
+		cpu.processTIME()
 
 	default:
 		cpu.stop()
@@ -208,6 +210,11 @@ func (cpu *CPU) processJNE() {
 	if a != b {
 		cpu.setPC(ip)
 	}
+}
+
+func (cpu *CPU) processTIME() {
+	time := uint64(time.Now().UnixMilli())
+	cpu.stack.Push(time)
 }
 
 func (cpu *CPU) setPC(value uint64) {
