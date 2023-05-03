@@ -488,3 +488,59 @@ func TestHLT(t *testing.T) {
 	testCase.AddStackTest(1, 10)
 	testCase.Assert()
 }
+
+// Calculate sum from 1 -> n
+// Write the result to the ten
+func TestSumFrom1ToN(t *testing.T) {
+	var sumSlot uint64 = 0
+	var iSlot uint64 = 8
+	var nSlot uint64 = 9
+	var FINISH_LABEL uint64 = 28
+
+	testCase := MakeTestCase(t)
+
+	/*Setup memory at 0 for sum variable*/
+	testCase.AddStep(MakePUSH(0))
+	testCase.AddStep(MakePUSH(sumSlot))
+	testCase.AddStep(MakeSTORE())
+
+	/*Setup memory at 8 for i variable*/
+	testCase.AddStep(MakePUSH(0))
+	testCase.AddStep(MakePUSH(iSlot))
+	testCase.AddStep(MakeSTORE8())
+
+	/*Setup memory at 9 for n variable*/
+	testCase.AddStep(MakePUSH(100))
+	testCase.AddStep(MakePUSH(nSlot))
+	testCase.AddStep(MakeSTORE8())
+
+	testCase.AddStep(MakePUSH(iSlot))
+	testCase.AddStep(MakeLOAD8())
+	testCase.AddStep(MakePUSH(nSlot))
+	testCase.AddStep(MakeLOAD8())
+
+	testCase.AddStep(MakePUSH(FINISH_LABEL))
+	testCase.AddStep(MakeJGT())
+
+	testCase.AddStep(MakePUSH(sumSlot))
+	testCase.AddStep(MakeLOAD())
+	testCase.AddStep(MakePUSH(iSlot))
+	testCase.AddStep(MakeLOAD8())
+	testCase.AddStep(MakeDUP())
+	testCase.AddStep(MakeINC())
+	testCase.AddStep(MakePUSH(iSlot))
+	testCase.AddStep(MakeSTORE8())
+	testCase.AddStep(MakeADD())
+	testCase.AddStep(MakePUSH(sumSlot))
+	testCase.AddStep(MakeSTORE())
+	testCase.AddStep(MakePUSH(9))
+	testCase.AddStep(MakeJMP())
+	testCase.AddStep(MakeHLT())
+
+	testCase.AddMemoryTest(0, 0xBA)
+	testCase.AddMemoryTest(1, 0x13)
+	testCase.AddMemoryTest(8, 101)
+	testCase.AddMemoryTest(9, 100)
+	testCase.AddMemoryTest(10, 0)
+	testCase.Assert()
+}
