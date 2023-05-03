@@ -6,50 +6,54 @@ package vm
 *	Next 56 bits used for operand
  */
 var (
-	POP    uint8 = 0x01
-	PUSH   uint8 = 0x02
-	ADD    uint8 = 0x04
-	SUB    uint8 = 0x05 // stack[i - 1] = stack[i - 1] - stack[i]
-	MUL    uint8 = 0x06
-	DIV    uint8 = 0x07
-	AND    uint8 = 0x08
-	OR     uint8 = 0x09
-	NAND   uint8 = 0x0A
-	XOR    uint8 = 0x0B
-	NOT    uint8 = 0x0C
-	LT     uint8 = 0x0D // stack[i - 1] < stack[i]
-	GT     uint8 = 0x0E // stack[i - 1] > stack[i]
-	LTE    uint8 = 0x0F // stack[i - 1] <= stack[i]
-	GTE    uint8 = 0x10 // stack[i - 1] >= stack[i]
-	EQ     uint8 = 0x11 // stack[i - 1] == stack[i]
-	SHL    uint8 = 0x12 // Shift left stack[i] by stack[i-1] bits
-	SHR    uint8 = 0x13 // Shift right stack[i] by stack[i-1] bits
-	INC    uint8 = 0x20
-	DEC    uint8 = 0x21
-	MOD    uint8 = 0x22
-	POW    uint8 = 0x23
-	IMUL   uint8 = 0x24
-	IDIV   uint8 = 0x25
-	DUP    uint8 = 0x38
-	SWAP   uint8 = 0x39
-	LOAD   uint8 = 0x40 // Load from memory that point by stack[i]
-	STORE  uint8 = 0x41 // Store stack[i-1] to memory that point by stack[i]
-	SLOAD  uint8 = 0x60
-	SSTORE uint8 = 0x61
-	CALL   uint8 = 0x80
-	RET    uint8 = 0x81
-	HLT    uint8 = 0x85
-	TIME   uint8 = 0x86
-	SPACE  uint8 = 0x87 // Load available RAM index after ROM
-	JMP    uint8 = 0xA0 // Unconditinal jump
-	JN     uint8 = 0xA1 // Jump if negative
-	JP     uint8 = 0xA2 // Jump if positive
-	JE     uint8 = 0xA3 // Jump if zero
-	JNE    uint8 = 0xA4 // Jump if not zero
-	JLT    uint8 = 0xA5 // Jump to stack[i] if stack[i-2] less than stack[i-1]
-	JGT    uint8 = 0xA6 // Jump to stack[i] if stack[i-2] greater than stack[i-1]
-	JLE    uint8 = 0xA7 // Jump to stack[i] if stack[i-2] less or equal stack[i-1]
-	JGE    uint8 = 0xA8 // Jump to stack[i] if stack[i-2] greater or equal stack[i-1]
+	POP     uint8 = 0x01
+	PUSH    uint8 = 0x02
+	ADD     uint8 = 0x04
+	SUB     uint8 = 0x05 // stack[i - 1] = stack[i - 1] - stack[i]
+	MUL     uint8 = 0x06
+	DIV     uint8 = 0x07
+	AND     uint8 = 0x08
+	OR      uint8 = 0x09
+	NAND    uint8 = 0x0A
+	XOR     uint8 = 0x0B
+	NOT     uint8 = 0x0C
+	LT      uint8 = 0x0D // stack[i - 1] < stack[i]
+	GT      uint8 = 0x0E // stack[i - 1] > stack[i]
+	LTE     uint8 = 0x0F // stack[i - 1] <= stack[i]
+	GTE     uint8 = 0x10 // stack[i - 1] >= stack[i]
+	EQ      uint8 = 0x11 // stack[i - 1] == stack[i]
+	SHL     uint8 = 0x12 // Shift left stack[i - 1] by stack[i] bits
+	SHR     uint8 = 0x13 // Shift right stack[i - 1] by stack[i] bits
+	INC     uint8 = 0x20
+	DEC     uint8 = 0x21
+	MOD     uint8 = 0x22
+	POW     uint8 = 0x23
+	IMUL    uint8 = 0x24
+	IDIV    uint8 = 0x25
+	DUP     uint8 = 0x38
+	SWAP    uint8 = 0x39
+	LOAD    uint8 = 0x40 // Load 8 bytes from memory that point by stack[i]
+	STORE   uint8 = 0x41 // Store 8 bytes at stack[i-1] to the memory that point by stack[i]
+	LOAD8   uint8 = 0x42 // Load 8 bytes from memory that point by stack[i]
+	STORE8  uint8 = 0x43 // Store 8 bytes at stack[i-1] to the memory that point by stack[i]
+	SLOAD   uint8 = 0x60
+	SSTORE  uint8 = 0x61
+	SLOAD8  uint8 = 0x62
+	SSTORE8 uint8 = 0x63
+	CALL    uint8 = 0x80
+	RET     uint8 = 0x81
+	HLT     uint8 = 0x85
+	TIME    uint8 = 0x86
+	SPACE   uint8 = 0x87 // Load available RAM index after ROM
+	JMP     uint8 = 0xA0 // Unconditinal jump
+	JN      uint8 = 0xA1 // Jump if negative
+	JP      uint8 = 0xA2 // Jump if positive
+	JE      uint8 = 0xA3 // Jump if zero
+	JNE     uint8 = 0xA4 // Jump if not zero
+	JLT     uint8 = 0xA5 // Jump to stack[i] if stack[i-2] less than stack[i-1]
+	JGT     uint8 = 0xA6 // Jump to stack[i] if stack[i-2] greater than stack[i-1]
+	JLE     uint8 = 0xA7 // Jump to stack[i] if stack[i-2] less or equal stack[i-1]
+	JGE     uint8 = 0xA8 // Jump to stack[i] if stack[i-2] greater or equal stack[i-1]
 )
 
 func MakePOP() uint64 {
