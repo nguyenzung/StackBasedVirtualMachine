@@ -3,9 +3,9 @@ package vm
 import "fmt"
 
 var (
-	defaulRomSize   uint32 = 25000 * 8 // Each instruction takes 8 bytes
-	codeSegmentSize uint32 = 250000 * 8
-	dataSegmentSize uint32 = 2000000
+	defaulRomSize   uint32 = 50000 * 8 // Each instruction takes 8 bytes
+	codeSegmentSize uint32 = 550000 * 8
+	dataSegmentSize uint32 = 16000000
 )
 
 type VM struct {
