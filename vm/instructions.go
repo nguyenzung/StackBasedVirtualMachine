@@ -49,12 +49,13 @@ var (
 	JN      uint8 = 0xA1 // Jump if negative
 	JP      uint8 = 0xA2 // Jump if positive
 	JZ      uint8 = 0xA3 // Jump if zero
-	JE      uint8 = 0xA4 // Jump if equal
-	JNE     uint8 = 0xA5 // Jump if not equal
-	JLT     uint8 = 0xA6 // Jump to stack[i] if stack[i-2] less than stack[i-1]
-	JGT     uint8 = 0xA7 // Jump to stack[i] if stack[i-2] greater than stack[i-1]
-	JLE     uint8 = 0xA8 // Jump to stack[i] if stack[i-2] less or equal stack[i-1]
-	JGE     uint8 = 0xA9 // Jump to stack[i] if stack[i-2] greater or equal stack[i-1]
+	JNZ     uint8 = 0xA4 // Jump if not zero
+	JE      uint8 = 0xA5 // Jump if equal
+	JNE     uint8 = 0xA6 // Jump if not equal
+	JLT     uint8 = 0xA7 // Jump to stack[i] if stack[i-2] less than stack[i-1]
+	JGT     uint8 = 0xA8 // Jump to stack[i] if stack[i-2] greater than stack[i-1]
+	JLE     uint8 = 0xA9 // Jump to stack[i] if stack[i-2] less or equal stack[i-1]
+	JGE     uint8 = 0xAA // Jump to stack[i] if stack[i-2] greater or equal stack[i-1]
 )
 
 func MakePOP() uint64 {
@@ -222,6 +223,18 @@ func MakeSTORE() uint64 {
 	return opcode
 }
 
+func MakeLOAD8() uint64 {
+	var opcode uint64 = uint64(LOAD8)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeSTORE8() uint64 {
+	var opcode uint64 = uint64(STORE8)
+	opcode = opcode << 56
+	return opcode
+}
+
 func MakeSLOAD() uint64 {
 	var opcode uint64 = uint64(SLOAD)
 	opcode = opcode << 56
@@ -278,6 +291,12 @@ func MakeJP() uint64 {
 
 func MakeJZ() uint64 {
 	var opcode uint64 = uint64(JZ)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeJNZ() uint64 {
+	var opcode uint64 = uint64(JNZ)
 	opcode = opcode << 56
 	return opcode
 }

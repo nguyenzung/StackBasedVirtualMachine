@@ -100,6 +100,48 @@ func TestSHR(t *testing.T) {
 	testCase.Assert()
 }
 
+func TestARI(t *testing.T) {
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakeDUP())
+	testCase.AddStep(MakeINC())
+	testCase.AddStep(MakeADD())
+	testCase.AddStep(MakePUSH(4))
+	testCase.AddStep(MakeDEC())
+	testCase.AddStep(MakeADD())
+	testCase.AddStep(MakePUSH(6))
+	testCase.AddStep(MakeEQ())    // [1]
+	testCase.AddStep(MakeDUP())   // [1 1]
+	testCase.AddStep(MakePUSH(2)) // [1 1 2]
+	testCase.AddStep(MakeEQ())    // [1 0]
+	testCase.AddStep(MakeDUP())   // [1 0 0]
+	testCase.AddStep(MakePUSH(2)) // [1 0 0 2]
+	testCase.AddStep(MakeLT())    // [1 0 1]
+	testCase.AddStep(MakeDUP())   // [1 0 1 1]
+	testCase.AddStep(MakePUSH(1)) // [1 0 1 1 1]
+	testCase.AddStep(MakeLT())    // [1 0 1 0]
+	testCase.AddStep(MakeDUP())   // [1 0 1 0 0]
+	testCase.AddStep(MakeINC())   // [1 0 1 0 1]
+	testCase.AddStep(MakeDUP())   // [1 0 1 0 1 1]
+	testCase.AddStep(MakePUSH(0)) // [1 0 1 0 1 1 0]
+	testCase.AddStep(MakeGT())    // [1 0 1 0 1 1]
+	testCase.AddStep(MakeDUP())   // [1 0 1 0 1 1 1]
+	testCase.AddStep(MakePUSH(1)) // [1 0 1 0 1 1 1 1]
+	testCase.AddStep(MakeGT())    // [1 0 1 0 1 1 0]
+	testCase.AddStep(MakeDUP())   // [1 0 1 0 1 1 0 0]
+	testCase.AddStep(MakePUSH(5)) // [1 0 1 0 1 1 0 0 5]
+	testCase.AddStep(MakeADD())   // [1 0 1 0 1 1 0 5]
+	testCase.AddStackTest(0, 1)
+	testCase.AddStackTest(1, 0)
+	testCase.AddStackTest(2, 1)
+	testCase.AddStackTest(3, 0)
+	testCase.AddStackTest(4, 1)
+	testCase.AddStackTest(5, 1)
+	testCase.AddStackTest(6, 0)
+	testCase.AddStackTest(7, 5)
+	testCase.Assert()
+}
+
 func TestLOAD(t *testing.T) {
 	testCase := MakeTestCase(t)
 	testCase.UpdateMemoryAddress(0, 0xfd)
@@ -137,9 +179,9 @@ func TestLOAD8(t *testing.T) {
 	testCase.UpdateMemoryAddress(0, 0xfd)
 	testCase.UpdateMemoryAddress(0xfd, 0xff)
 	testCase.AddStep(MakePUSH(0))
-	testCase.AddStep(MakeLOAD())
+	testCase.AddStep(MakeLOAD8())
 	testCase.AddStep(MakeDUP())
-	testCase.AddStep(MakeLOAD())
+	testCase.AddStep(MakeLOAD8())
 	testCase.AddStackTest(0, 0xfd)
 	testCase.AddStackTest(1, 0xff)
 	testCase.Assert()
@@ -149,7 +191,7 @@ func TestSTORE8(t *testing.T) {
 	testCase := MakeTestCase(t)
 	testCase.AddStep(MakePUSH(0xee))
 	testCase.AddStep(MakePUSH(1))
-	testCase.AddStep(MakeSTORE())
+	testCase.AddStep(MakeSTORE8())
 	testCase.AddStep(MakePUSH(2023))
 	testCase.AddStackTest(0, 2023)
 	testCase.AddMemoryTest(0, 0x00)
@@ -220,6 +262,24 @@ func TestJZ(t *testing.T) {
 	testCase.AddStep(MakePUSH(0))
 	testCase.AddStep(MakePUSH(PASSED_LABEL)) // jump to the instruction 8
 	testCase.AddStep(MakeJZ())
+	testCase.AddStep(MakePUSH(15))
+	testCase.AddStep(MakeHLT())
+	testCase.AddStep(MakePUSH(2023))
+	testCase.AddStep(MakeHLT())
+	testCase.AddStackTest(0, 2023)
+	testCase.Assert()
+}
+
+func TestJNZ(t *testing.T) {
+	var FAILED_LABEL uint64 = 6
+	var PASSED_LABEL uint64 = 8
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(0))
+	testCase.AddStep(MakePUSH(FAILED_LABEL)) // jump to the instruction 6
+	testCase.AddStep(MakeJNZ())
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakePUSH(PASSED_LABEL)) // jump to the instruction 8
+	testCase.AddStep(MakeJNZ())
 	testCase.AddStep(MakePUSH(15))
 	testCase.AddStep(MakeHLT())
 	testCase.AddStep(MakePUSH(2023))
@@ -427,10 +487,4 @@ func TestHLT(t *testing.T) {
 	testCase.AddStackTest(0, 5)
 	testCase.AddStackTest(1, 10)
 	testCase.Assert()
-}
-
-// Calculate sum from 1 -> n
-// Write the result to the ten
-func TestSumFrom1ToN(t *testing.T) {
-
 }

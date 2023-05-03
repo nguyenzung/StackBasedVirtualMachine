@@ -68,6 +68,10 @@ func (cpu *CPU) exec(opcode uint8, operand uint64) {
 		cpu.processXor()
 	case NOT:
 		cpu.processNot()
+	case INC:
+		cpu.processINC()
+	case DEC:
+		cpu.processDEC()
 	case SHL:
 		cpu.processSHL()
 	case SHR:
@@ -76,6 +80,16 @@ func (cpu *CPU) exec(opcode uint8, operand uint64) {
 		cpu.processDup()
 	case SWAP:
 		cpu.processSwap()
+	case EQ:
+		cpu.processEQ()
+	case LT:
+		cpu.processLT()
+	case GT:
+		cpu.processGT()
+	case LTE:
+		cpu.processLTE()
+	case GTE:
+		cpu.processGTE()
 	case LOAD:
 		cpu.processLOAD()
 	case STORE:
@@ -92,6 +106,8 @@ func (cpu *CPU) exec(opcode uint8, operand uint64) {
 		cpu.processJP()
 	case JZ:
 		cpu.processJZ()
+	case JNZ:
+		cpu.processJNZ()
 	case JE:
 		cpu.processJE()
 	case JNE:
@@ -180,6 +196,16 @@ func (cpu *CPU) processNot() {
 	cpu.stack.Push(math.MaxUint64 ^ a)
 }
 
+func (cpu *CPU) processINC() {
+	a := cpu.stack.Pop()
+	cpu.stack.Push(a + 1)
+}
+
+func (cpu *CPU) processDEC() {
+	a := cpu.stack.Pop()
+	cpu.stack.Push(a - 1)
+}
+
 func (cpu *CPU) processSHL() {
 	b := cpu.stack.Pop()
 	a := cpu.stack.Pop()
@@ -204,6 +230,56 @@ func (cpu *CPU) processSwap() {
 	cpu.stack.Push(a)
 }
 
+func (cpu *CPU) processEQ() {
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	var r uint64 = 0
+	if a == b {
+		r = 1
+	}
+	cpu.stack.Push(r)
+}
+
+func (cpu *CPU) processLT() {
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	var r uint64 = 0
+	if a < b {
+		r = 1
+	}
+	cpu.stack.Push(r)
+}
+
+func (cpu *CPU) processGT() {
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	var r uint64 = 0
+	if a > b {
+		r = 1
+	}
+	cpu.stack.Push(r)
+}
+
+func (cpu *CPU) processLTE() {
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	var r uint64 = 0
+	if a <= b {
+		r = 1
+	}
+	cpu.stack.Push(r)
+}
+
+func (cpu *CPU) processGTE() {
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	var r uint64 = 0
+	if a >= b {
+		r = 1
+	}
+	cpu.stack.Push(r)
+}
+
 func (cpu *CPU) processLOAD() {
 	index := cpu.stack.Pop() + uint64(cpu.vm.getDataSegment())
 	bytes := cpu.vm.memory[index : index+8]
@@ -226,7 +302,7 @@ func (cpu *CPU) processLOAD8() {
 func (cpu *CPU) processSTORE8() {
 	index := cpu.stack.Pop() + uint64(cpu.vm.getDataSegment())
 	value := cpu.stack.Pop()
-	cpu.vm.memory[index] = uint8(value | 0x00000000000000ff)
+	cpu.vm.memory[index] = uint8(value & 0x00000000000000ff)
 }
 
 func (cpu *CPU) processJmp() {
@@ -258,6 +334,14 @@ func (cpu *CPU) processJZ() {
 	ip := cpu.stack.Pop()
 	a := cpu.stack.Pop()
 	if a == 0 {
+		cpu.setPC(ip)
+	}
+}
+
+func (cpu *CPU) processJNZ() {
+	ip := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	if a != 0 {
 		cpu.setPC(ip)
 	}
 }
