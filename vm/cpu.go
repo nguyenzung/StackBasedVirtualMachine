@@ -90,10 +90,20 @@ func (cpu *CPU) exec(opcode uint8, operand uint64) {
 		cpu.processJN()
 	case JP:
 		cpu.processJP()
+	case JZ:
+		cpu.processJZ()
 	case JE:
 		cpu.processJE()
 	case JNE:
 		cpu.processJNE()
+	case JLT:
+		cpu.processJLT()
+	case JGT:
+		cpu.processJGT()
+	case JLE:
+		cpu.processJLE()
+	case JGE:
+		cpu.processJGE()
 	case TIME:
 		cpu.processTIME()
 	case CALL:
@@ -227,8 +237,9 @@ func (cpu *CPU) processJmp() {
 func (cpu *CPU) processJN() {
 	ip := cpu.stack.Pop()
 	a := cpu.stack.Pop()
+	b := ((a << 1) >> 1)
 	a = a >> 63
-	if a == 1 {
+	if a == 1 && b > 0 {
 		cpu.setPC(ip)
 	}
 }
@@ -236,7 +247,16 @@ func (cpu *CPU) processJN() {
 func (cpu *CPU) processJP() {
 	ip := cpu.stack.Pop()
 	a := cpu.stack.Pop()
+	b := ((a << 1) >> 1)
 	a = a >> 63
+	if a == 0 && b > 0 {
+		cpu.setPC(ip)
+	}
+}
+
+func (cpu *CPU) processJZ() {
+	ip := cpu.stack.Pop()
+	a := cpu.stack.Pop()
 	if a == 0 {
 		cpu.setPC(ip)
 	}
@@ -256,6 +276,42 @@ func (cpu *CPU) processJNE() {
 	b := cpu.stack.Pop()
 	a := cpu.stack.Pop()
 	if a != b {
+		cpu.setPC(ip)
+	}
+}
+
+func (cpu *CPU) processJLT() {
+	ip := cpu.stack.Pop()
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	if a < b {
+		cpu.setPC(ip)
+	}
+}
+
+func (cpu *CPU) processJGT() {
+	ip := cpu.stack.Pop()
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	if a > b {
+		cpu.setPC(ip)
+	}
+}
+
+func (cpu *CPU) processJLE() {
+	ip := cpu.stack.Pop()
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	if a <= b {
+		cpu.setPC(ip)
+	}
+}
+
+func (cpu *CPU) processJGE() {
+	ip := cpu.stack.Pop()
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	if a >= b {
 		cpu.setPC(ip)
 	}
 }

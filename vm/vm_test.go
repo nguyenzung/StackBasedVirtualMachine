@@ -58,12 +58,12 @@ func (testCase *TestCase) Assert() {
 
 func TestAdd(t *testing.T) {
 	testCase := MakeTestCase(t)
-	testCase.AddStep(MakePUSH(5))  // 1
-	testCase.AddStep(MakePUSH(13)) // 2
-	testCase.AddStep(MakePUSH(7))  // 3
-	testCase.AddStep(MakeADD())    // 4
-	testCase.AddStep(MakePUSH(1))  // 5
-	testCase.AddStep(MakeADD())    // 6
+	testCase.AddStep(MakePUSH(5))
+	testCase.AddStep(MakePUSH(13))
+	testCase.AddStep(MakePUSH(7))
+	testCase.AddStep(MakeADD())
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakeADD())
 	testCase.AddStackTest(0, 5)
 	testCase.AddStackTest(1, 21)
 	testCase.Assert()
@@ -76,7 +76,9 @@ func TestSub(t *testing.T) {
 	testCase.AddStep(MakeSUB())
 	testCase.AddStep(MakePUSH(10))
 	testCase.AddStep(MakeSUB())
-	testCase.AddStackTest(0, 10)
+	testCase.AddStep(MakePUSH(11))
+	testCase.AddStep(MakeSUB())
+	testCase.AddStackTest(0, 0xffffffffffffffff)
 	testCase.Assert()
 }
 
@@ -153,6 +155,244 @@ func TestSTORE8(t *testing.T) {
 	testCase.AddMemoryTest(0, 0x00)
 	testCase.AddMemoryTest(1, 0xee)
 	testCase.AddMemoryTest(2, 0x00)
+	testCase.Assert()
+}
+
+func TestJMP(t *testing.T) {
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(4))
+	testCase.AddStep(MakeJMP())
+	testCase.AddStep(MakePUSH(12))
+	testCase.AddStep(MakeHLT())
+	testCase.AddStep(MakePUSH(2023))
+	testCase.AddStep(MakeHLT())
+	testCase.AddStackTest(0, 2023)
+	testCase.Assert()
+}
+
+func TestJN(t *testing.T) {
+	var FAILED_LABEL uint64 = 8
+	var PASSED_LABEL uint64 = 10
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(0))
+	testCase.AddStep(MakePUSH(FAILED_LABEL)) // jump to the instruction 8
+	testCase.AddStep(MakeJN())
+	testCase.AddStep(MakePUSH(0xffffffffffffff))
+	testCase.AddStep(MakePUSH(8))
+	testCase.AddStep(MakeSHL())
+	testCase.AddStep(MakePUSH(PASSED_LABEL)) // jump to the instruction 10
+	testCase.AddStep(MakeJN())
+	testCase.AddStep(MakePUSH(15))
+	testCase.AddStep(MakeHLT())
+	testCase.AddStep(MakePUSH(2023))
+	testCase.AddStep(MakeHLT())
+	testCase.AddStackTest(0, 2023)
+	testCase.Assert()
+}
+
+func TestJP(t *testing.T) {
+	var FAILED_LABEL uint64 = 8
+	var PASSED_LABEL uint64 = 10
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(0))
+	testCase.AddStep(MakePUSH(FAILED_LABEL)) // jump to the instruction 8
+	testCase.AddStep(MakeJP())
+	testCase.AddStep(MakePUSH(0xffffffffffffff))
+	testCase.AddStep(MakePUSH(7))
+	testCase.AddStep(MakeSHL())
+	testCase.AddStep(MakePUSH(PASSED_LABEL)) // jump to the instruction 10
+	testCase.AddStep(MakeJP())
+	testCase.AddStep(MakePUSH(15))
+	testCase.AddStep(MakeHLT())
+	testCase.AddStep(MakePUSH(2023))
+	testCase.AddStep(MakeHLT())
+	testCase.AddStackTest(0, 2023)
+	testCase.Assert()
+}
+
+func TestJZ(t *testing.T) {
+	var FAILED_LABEL uint64 = 6
+	var PASSED_LABEL uint64 = 8
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakePUSH(FAILED_LABEL)) // jump to the instruction 6
+	testCase.AddStep(MakeJZ())
+	testCase.AddStep(MakePUSH(0))
+	testCase.AddStep(MakePUSH(PASSED_LABEL)) // jump to the instruction 8
+	testCase.AddStep(MakeJZ())
+	testCase.AddStep(MakePUSH(15))
+	testCase.AddStep(MakeHLT())
+	testCase.AddStep(MakePUSH(2023))
+	testCase.AddStep(MakeHLT())
+	testCase.AddStackTest(0, 2023)
+	testCase.Assert()
+}
+
+func TestJE(t *testing.T) {
+	var FAILED_LABEL uint64 = 8
+	var PASSED_LABEL uint64 = 10
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakePUSH(FAILED_LABEL)) // jump to the instruction 8
+	testCase.AddStep(MakeJE())
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakePUSH(PASSED_LABEL)) // jump to the instruction 10
+	testCase.AddStep(MakeJE())
+	testCase.AddStep(MakePUSH(15))
+	testCase.AddStep(MakeHLT())
+	testCase.AddStep(MakePUSH(2023))
+	testCase.AddStep(MakeHLT())
+	testCase.AddStackTest(0, 2023)
+	testCase.Assert()
+}
+
+func TestJNE(t *testing.T) {
+	var FAILED_LABEL uint64 = 8
+	var PASSED_LABEL uint64 = 10
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakePUSH(FAILED_LABEL)) // jump to the instruction 8
+	testCase.AddStep(MakeJNE())
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakePUSH(PASSED_LABEL)) // jump to the instruction 10
+	testCase.AddStep(MakeJNE())
+	testCase.AddStep(MakePUSH(15))
+	testCase.AddStep(MakeHLT())
+	testCase.AddStep(MakePUSH(2023))
+	testCase.AddStep(MakeHLT())
+	testCase.AddStackTest(0, 2023)
+	testCase.Assert()
+}
+
+func TestJLT(t *testing.T) {
+	var FAILED_LABEL uint64 = 12
+	var PASSED_LABEL uint64 = 14
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakePUSH(FAILED_LABEL))
+	testCase.AddStep(MakeJLT())
+	testCase.AddStep(MakePUSH(3))
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakePUSH(FAILED_LABEL))
+	testCase.AddStep(MakeJLT())
+	testCase.AddStep(MakePUSH(3))
+	testCase.AddStep(MakePUSH(5))
+	testCase.AddStep(MakePUSH(PASSED_LABEL))
+	testCase.AddStep(MakeJLT())
+	testCase.AddStep(MakePUSH(15)) // JMP to failed
+	testCase.AddStep(MakeHLT())
+	testCase.AddStep(MakePUSH(2023)) // JMP to PASS
+	testCase.AddStep(MakeHLT())
+	testCase.AddStackTest(0, 2023)
+	testCase.Assert()
+}
+
+func TestJGT(t *testing.T) {
+	var FAILED_LABEL uint64 = 12
+	var PASSED_LABEL uint64 = 14
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakePUSH(FAILED_LABEL))
+	testCase.AddStep(MakeJGT())
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakePUSH(3))
+	testCase.AddStep(MakePUSH(FAILED_LABEL))
+	testCase.AddStep(MakeJGT())
+	testCase.AddStep(MakePUSH(8))
+	testCase.AddStep(MakePUSH(5))
+	testCase.AddStep(MakePUSH(PASSED_LABEL))
+	testCase.AddStep(MakeJGT())
+	testCase.AddStep(MakePUSH(15)) // JMP to failed
+	testCase.AddStep(MakeHLT())
+	testCase.AddStep(MakePUSH(2023)) // JMP to PASS
+	testCase.AddStep(MakeHLT())
+	testCase.AddStackTest(0, 2023)
+	testCase.Assert()
+}
+
+func TestJLE_LESS(t *testing.T) {
+	var FAILED_LABEL uint64 = 8
+	var PASSED_LABEL uint64 = 10
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakePUSH(FAILED_LABEL))
+	testCase.AddStep(MakeJLE())
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakePUSH(PASSED_LABEL))
+	testCase.AddStep(MakeJLE())
+	testCase.AddStep(MakePUSH(15)) // JMP to failed
+	testCase.AddStep(MakeHLT())
+	testCase.AddStep(MakePUSH(2023)) // JMP to PASS
+	testCase.AddStep(MakeHLT())
+	testCase.AddStackTest(0, 2023)
+	testCase.Assert()
+}
+
+func TestJLE_EQUAL(t *testing.T) {
+	var FAILED_LABEL uint64 = 8
+	var PASSED_LABEL uint64 = 10
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakePUSH(FAILED_LABEL))
+	testCase.AddStep(MakeJLE())
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakePUSH(PASSED_LABEL))
+	testCase.AddStep(MakeJLE())
+	testCase.AddStep(MakePUSH(15)) // JMP to failed
+	testCase.AddStep(MakeHLT())
+	testCase.AddStep(MakePUSH(2023)) // JMP to PASS
+	testCase.AddStep(MakeHLT())
+	testCase.AddStackTest(0, 2023)
+	testCase.Assert()
+}
+
+func TestJGE_GREATER(t *testing.T) {
+	var FAILED_LABEL uint64 = 8
+	var PASSED_LABEL uint64 = 10
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakePUSH(FAILED_LABEL))
+	testCase.AddStep(MakeJGE())
+	testCase.AddStep(MakePUSH(3))
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakePUSH(PASSED_LABEL))
+	testCase.AddStep(MakeJGE())
+	testCase.AddStep(MakePUSH(15)) // JMP to failed
+	testCase.AddStep(MakeHLT())
+	testCase.AddStep(MakePUSH(2023)) // JMP to PASS
+	testCase.AddStep(MakeHLT())
+	testCase.AddStackTest(0, 2023)
+	testCase.Assert()
+}
+
+func TestJGE_EQUAL(t *testing.T) {
+	var FAILED_LABEL uint64 = 8
+	var PASSED_LABEL uint64 = 10
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakePUSH(FAILED_LABEL))
+	testCase.AddStep(MakeJGE())
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakePUSH(PASSED_LABEL))
+	testCase.AddStep(MakeJGE())
+	testCase.AddStep(MakePUSH(15)) // JMP to failed
+	testCase.AddStep(MakeHLT())
+	testCase.AddStep(MakePUSH(2023)) // JMP to PASS
+	testCase.AddStep(MakeHLT())
+	testCase.AddStackTest(0, 2023)
 	testCase.Assert()
 }
 

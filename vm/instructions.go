@@ -48,12 +48,13 @@ var (
 	JMP     uint8 = 0xA0 // Unconditinal jump
 	JN      uint8 = 0xA1 // Jump if negative
 	JP      uint8 = 0xA2 // Jump if positive
-	JE      uint8 = 0xA3 // Jump if zero
-	JNE     uint8 = 0xA4 // Jump if not zero
-	JLT     uint8 = 0xA5 // Jump to stack[i] if stack[i-2] less than stack[i-1]
-	JGT     uint8 = 0xA6 // Jump to stack[i] if stack[i-2] greater than stack[i-1]
-	JLE     uint8 = 0xA7 // Jump to stack[i] if stack[i-2] less or equal stack[i-1]
-	JGE     uint8 = 0xA8 // Jump to stack[i] if stack[i-2] greater or equal stack[i-1]
+	JZ      uint8 = 0xA3 // Jump if zero
+	JE      uint8 = 0xA4 // Jump if equal
+	JNE     uint8 = 0xA5 // Jump if not equal
+	JLT     uint8 = 0xA6 // Jump to stack[i] if stack[i-2] less than stack[i-1]
+	JGT     uint8 = 0xA7 // Jump to stack[i] if stack[i-2] greater than stack[i-1]
+	JLE     uint8 = 0xA8 // Jump to stack[i] if stack[i-2] less or equal stack[i-1]
+	JGE     uint8 = 0xA9 // Jump to stack[i] if stack[i-2] greater or equal stack[i-1]
 )
 
 func MakePOP() uint64 {
@@ -271,6 +272,12 @@ func MakeJMP() uint64 {
 
 func MakeJP() uint64 {
 	var opcode uint64 = uint64(JP)
+	opcode = opcode << 56
+	return opcode
+}
+
+func MakeJZ() uint64 {
+	var opcode uint64 = uint64(JZ)
 	opcode = opcode << 56
 	return opcode
 }
