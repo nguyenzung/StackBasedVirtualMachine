@@ -1,6 +1,8 @@
 package vm
 
 import (
+	"encoding/binary"
+	"fmt"
 	"math"
 	"time"
 )
@@ -75,6 +77,14 @@ func (cpu *CPU) exec(opcode uint8, operand uint64) {
 		cpu.processDup()
 	case SWAP:
 		cpu.processSwap()
+	case LOAD:
+		cpu.processLOAD()
+	case STORE:
+		cpu.processSTORE()
+	case LOAD8:
+		cpu.processLOAD8()
+	case STORE8:
+		cpu.processSTORE8()
 	case JMP:
 		cpu.processJmp()
 	case JN:
@@ -183,6 +193,25 @@ func (cpu *CPU) processSwap() {
 	a := cpu.stack.Pop()
 	cpu.stack.Push(b)
 	cpu.stack.Push(a)
+}
+
+func (cpu *CPU) processLOAD() {
+	index := cpu.stack.Pop() + uint64(cpu.vm.getDataSegment())
+	bytes := cpu.vm.memory[index : index+8]
+	num := binary.LittleEndian.Uint64(bytes)
+	cpu.stack.Push(num)
+}
+
+func (cpu *CPU) processSTORE() {
+	index := cpu.stack.Pop() + uint64(cpu.vm.getDataSegment())
+	value := cpu.stack.Pop()
+	binary.LittleEndian.PutUint64(cpu.vm.memory[index:index+8], value)
+}
+
+func (cpu *CPU) processLOAD8() {
+}
+
+func (cpu *CPU) processSTORE8() {
 }
 
 func (cpu *CPU) processJmp() {
