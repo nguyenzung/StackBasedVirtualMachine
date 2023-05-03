@@ -18,18 +18,11 @@ func MakeCPU(vm *VM) *CPU {
 }
 
 func (cpu *CPU) Run() {
-	steps := 30
-	counter := 0
 	idleTime := 1
 	for !cpu.hlt {
 		instruction := cpu.fetch()
 		opcode, operand := cpu.decode(instruction)
 		cpu.exec(opcode, operand)
-		if counter == steps {
-			break
-		} else {
-			counter++
-		}
 		if idleTime > 0 {
 			time.Sleep(time.Millisecond * time.Duration(idleTime))
 		}
@@ -90,7 +83,14 @@ func (cpu *CPU) exec(opcode uint8, operand uint64) {
 		cpu.processJNE()
 	case TIME:
 		cpu.processTIME()
-
+	case CALL:
+		cpu.processCALL()
+	case RET:
+		cpu.processRET()
+	case HLT:
+		cpu.processHLT()
+	case SPACE:
+		cpu.processSPACE()
 	default:
 		cpu.stop()
 	}
@@ -213,6 +213,20 @@ func (cpu *CPU) processJNE() {
 func (cpu *CPU) processTIME() {
 	time := uint64(time.Now().UnixMilli())
 	cpu.stack.Push(time)
+}
+
+func (cpu *CPU) processCALL() {
+}
+
+func (cpu *CPU) processRET() {
+}
+
+func (cpu *CPU) processHLT() {
+	cpu.hlt = true
+}
+
+func (cpu *CPU) processSPACE() {
+	cpu.stack.Push(uint64(cpu.vm.getDataSegment()))
 }
 
 func (cpu *CPU) setPC(value uint64) {

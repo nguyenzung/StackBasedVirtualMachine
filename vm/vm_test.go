@@ -1,7 +1,6 @@
 package vm
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -63,7 +62,6 @@ func TestAdd(t *testing.T) {
 }
 
 func TestSub(t *testing.T) {
-	// tests :=
 	testCase := MakeTestCase(t)
 	testCase.AddStep(MakePUSH(35))
 	testCase.AddStep(MakePUSH(15))
@@ -72,7 +70,6 @@ func TestSub(t *testing.T) {
 	testCase.AddStep(MakeSUB())
 	testCase.AddStackTest(0, 10)
 	testCase.Assert()
-	fmt.Println("Testsub")
 }
 
 func TestTIME(t *testing.T) {
@@ -83,7 +80,27 @@ func TestTIME(t *testing.T) {
 	testCase := MakeTestCase(t)
 	testCase.AddStep(MakePUSH(35))
 	testCase.AddStep(MakeTIME())
+	testCase.AddStackTest(0, 35)
 	testCase.AddStackTest(1, uint64(Now().UnixMilli()))
 	testCase.Assert()
-	fmt.Println("Testtime")
+}
+
+func TestSPACE(t *testing.T) {
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakeSPACE())
+	testCase.AddStackTest(0, uint64(defaulRomSize+codeSegmentSize))
+	testCase.Assert()
+}
+
+func TestHLT(t *testing.T) {
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(5))
+	testCase.AddStep(MakePUSH(5))
+	testCase.AddStep(MakePUSH(5))
+	testCase.AddStep(MakeADD())
+	testCase.AddStep(MakeHLT())
+	testCase.AddStep(MakeADD())
+	testCase.AddStackTest(0, 5)
+	testCase.AddStackTest(1, 10)
+	testCase.Assert()
 }

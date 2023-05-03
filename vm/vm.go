@@ -3,9 +3,9 @@ package vm
 import "fmt"
 
 var (
-	defaulRomSize   uint32 = 20000 * 8 // Each instruction takes 8 bytes
-	codeSegmentSize uint32 = 200000 * 8
-	dataSegmentSize uint32 = 2000000 * 8
+	defaulRomSize   uint32 = 25000 * 8 // Each instruction takes 8 bytes
+	codeSegmentSize uint32 = 250000 * 8
+	dataSegmentSize uint32 = 2000000
 )
 
 type VM struct {
@@ -27,7 +27,7 @@ func MakeVM(memorySize uint32) *VM {
 func (vm *VM) AddInstruction(instruction uint64) {
 	vm.rom = append(vm.rom, instruction)
 	// fmt.Println(len(vm.rom))
-	if len(vm.rom) > int(defaulRomSize) {
+	if len(vm.rom)*8 > int(defaulRomSize) {
 		panic("Exceed ROM size")
 	}
 }
@@ -48,6 +48,10 @@ func (vm *VM) loadRom() {
 			vm.memory[i*8+j] = 0xff & uint8(vm.rom[i]>>((7-j)*8))
 		}
 	}
+}
+
+func (vm *VM) getDataSegment() uint32 {
+	return defaulRomSize + codeSegmentSize
 }
 
 func (vm *VM) LoadInstruction(index uint64) uint64 {
