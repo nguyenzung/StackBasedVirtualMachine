@@ -72,6 +72,24 @@ func TestSub(t *testing.T) {
 	testCase.Assert()
 }
 
+func TestSHL(t *testing.T) {
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(12))
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakeSHL())
+	testCase.AddStackTest(0, 12<<2)
+	testCase.Assert()
+}
+
+func TestSHR(t *testing.T) {
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(12))
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakeSHR())
+	testCase.AddStackTest(0, 12>>2)
+	testCase.Assert()
+}
+
 func TestTIME(t *testing.T) {
 	Now := func() time.Time {
 		return time.Date(2023, 04, 30, 20, 0, 0, 0, time.UTC)
@@ -103,4 +121,10 @@ func TestHLT(t *testing.T) {
 	testCase.AddStackTest(0, 5)
 	testCase.AddStackTest(1, 10)
 	testCase.Assert()
+}
+
+// Calculate sum from 1 -> n
+// Write the result to the ten
+func TestSumFrom1ToN(t *testing.T) {
+
 }

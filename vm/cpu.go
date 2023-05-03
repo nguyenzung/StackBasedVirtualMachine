@@ -67,6 +67,10 @@ func (cpu *CPU) exec(opcode uint8, operand uint64) {
 		cpu.processXor()
 	case NOT:
 		cpu.processNot()
+	case SHL:
+		cpu.processSHL()
+	case SHR:
+		cpu.processSHR()
 	case DUP:
 		cpu.processDup()
 	case SWAP:
@@ -155,6 +159,18 @@ func (cpu *CPU) processXor() {
 func (cpu *CPU) processNot() {
 	a := cpu.stack.Pop()
 	cpu.stack.Push(math.MaxUint64 ^ a)
+}
+
+func (cpu *CPU) processSHL() {
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	cpu.stack.Push(a << b)
+}
+
+func (cpu *CPU) processSHR() {
+	b := cpu.stack.Pop()
+	a := cpu.stack.Pop()
+	cpu.stack.Push(a >> b)
 }
 
 func (cpu *CPU) processDup() {
