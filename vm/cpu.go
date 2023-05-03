@@ -2,7 +2,6 @@ package vm
 
 import (
 	"encoding/binary"
-	"fmt"
 	"math"
 	"time"
 )
