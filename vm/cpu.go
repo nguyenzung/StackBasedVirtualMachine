@@ -208,9 +208,15 @@ func (cpu *CPU) processSTORE() {
 }
 
 func (cpu *CPU) processLOAD8() {
+	index := cpu.stack.Pop() + uint64(cpu.vm.getDataSegment())
+	num := uint64(cpu.vm.memory[index])
+	cpu.stack.Push(num)
 }
 
 func (cpu *CPU) processSTORE8() {
+	index := cpu.stack.Pop() + uint64(cpu.vm.getDataSegment())
+	value := cpu.stack.Pop()
+	cpu.vm.memory[index] = uint8(value | 0x00000000000000ff)
 }
 
 func (cpu *CPU) processJmp() {

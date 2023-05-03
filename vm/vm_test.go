@@ -130,6 +130,32 @@ func TestSTORE(t *testing.T) {
 	testCase.Assert()
 }
 
+func TestLOAD8(t *testing.T) {
+	testCase := MakeTestCase(t)
+	testCase.UpdateMemoryAddress(0, 0xfd)
+	testCase.UpdateMemoryAddress(0xfd, 0xff)
+	testCase.AddStep(MakePUSH(0))
+	testCase.AddStep(MakeLOAD())
+	testCase.AddStep(MakeDUP())
+	testCase.AddStep(MakeLOAD())
+	testCase.AddStackTest(0, 0xfd)
+	testCase.AddStackTest(1, 0xff)
+	testCase.Assert()
+}
+
+func TestSTORE8(t *testing.T) {
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(0xee))
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakeSTORE())
+	testCase.AddStep(MakePUSH(2023))
+	testCase.AddStackTest(0, 2023)
+	testCase.AddMemoryTest(0, 0x00)
+	testCase.AddMemoryTest(1, 0xee)
+	testCase.AddMemoryTest(2, 0x00)
+	testCase.Assert()
+}
+
 func TestTIME(t *testing.T) {
 	Now := func() time.Time {
 		return time.Date(2023, 04, 30, 20, 0, 0, 0, time.UTC)
