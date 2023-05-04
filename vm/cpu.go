@@ -19,7 +19,7 @@ func MakeCPU(vm *VM) *CPU {
 }
 
 func (cpu *CPU) Run() {
-	idleTime := 1
+	idleTime := 0
 	for !cpu.hlt {
 		instruction := cpu.fetch()
 		opcode, operand := cpu.decode(instruction)
