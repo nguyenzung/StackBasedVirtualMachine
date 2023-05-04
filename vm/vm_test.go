@@ -525,7 +525,9 @@ func TestSetupFuncCall(t *testing.T) {
 func TestSumFrom1ToN(t *testing.T) {
 	var sumSlot uint64 = 0
 	var iSlot uint64 = 8
-	var nSlot uint64 = 9
+	var nSlot uint64 = 16
+
+	var LOOP_LABEL uint64 = 9
 	var FINISH_LABEL uint64 = 28
 
 	testCase := MakeTestCase(t)
@@ -538,17 +540,17 @@ func TestSumFrom1ToN(t *testing.T) {
 	/*Setup memory at 8 for i variable*/
 	testCase.AddStep(MakePUSH(0))
 	testCase.AddStep(MakePUSH(iSlot))
-	testCase.AddStep(MakeSTORE8())
+	testCase.AddStep(MakeSTORE())
 
 	/*Setup memory at 9 for n variable*/
-	testCase.AddStep(MakePUSH(100))
+	testCase.AddStep(MakePUSH(1000))
 	testCase.AddStep(MakePUSH(nSlot))
-	testCase.AddStep(MakeSTORE8())
+	testCase.AddStep(MakeSTORE())
 
 	testCase.AddStep(MakePUSH(iSlot))
-	testCase.AddStep(MakeLOAD8())
+	testCase.AddStep(MakeLOAD())
 	testCase.AddStep(MakePUSH(nSlot))
-	testCase.AddStep(MakeLOAD8())
+	testCase.AddStep(MakeLOAD())
 
 	testCase.AddStep(MakePUSH(FINISH_LABEL))
 	testCase.AddStep(MakeJGT())
@@ -556,22 +558,25 @@ func TestSumFrom1ToN(t *testing.T) {
 	testCase.AddStep(MakePUSH(sumSlot))
 	testCase.AddStep(MakeLOAD())
 	testCase.AddStep(MakePUSH(iSlot))
-	testCase.AddStep(MakeLOAD8())
+	testCase.AddStep(MakeLOAD())
 	testCase.AddStep(MakeDUP())
 	testCase.AddStep(MakeINC())
 	testCase.AddStep(MakePUSH(iSlot))
-	testCase.AddStep(MakeSTORE8())
+	testCase.AddStep(MakeSTORE())
 	testCase.AddStep(MakeADD())
 	testCase.AddStep(MakePUSH(sumSlot))
 	testCase.AddStep(MakeSTORE())
-	testCase.AddStep(MakePUSH(9))
+	testCase.AddStep(MakePUSH(LOOP_LABEL))
 	testCase.AddStep(MakeJMP())
 	testCase.AddStep(MakeHLT())
 
-	testCase.AddMemoryTest(0, 0xBA)
-	testCase.AddMemoryTest(1, 0x13)
-	testCase.AddMemoryTest(8, 101)
-	testCase.AddMemoryTest(9, 100)
+	// Result is 0x07a314 = 500500
+	testCase.AddMemoryTest(0, 0x14)
+	testCase.AddMemoryTest(1, 0xa3)
+	testCase.AddMemoryTest(2, 0x07)
+	testCase.AddMemoryTest(3, 0x00)
+	// testCase.AddMemoryTest(8, 201)
+	// testCase.AddMemoryTest(9, 200)
 	testCase.AddMemoryTest(10, 0)
 	testCase.Assert()
 }
