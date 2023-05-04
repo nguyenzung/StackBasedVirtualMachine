@@ -123,7 +123,7 @@ func (cpu *CPU) exec(opcode uint8, operand uint64) {
 	case TIME:
 		cpu.processTIME()
 	case CALL:
-		cpu.processCALL()
+		cpu.processCALL(operand)
 	case RET:
 		cpu.processRET()
 	case HLT:
@@ -405,10 +405,14 @@ func (cpu *CPU) processTIME() {
 	cpu.stack.Push(time)
 }
 
-func (cpu *CPU) processCALL() {
+func (cpu *CPU) processCALL(label uint64) {
+	cpu.stack.SetupCall(cpu.ip)
+	cpu.setPC(label)
 }
 
 func (cpu *CPU) processRET() {
+	pc := cpu.stack.SetupReturn()
+	cpu.setPC(pc)
 }
 
 func (cpu *CPU) processHLT() {

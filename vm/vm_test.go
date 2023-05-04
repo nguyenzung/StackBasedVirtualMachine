@@ -489,6 +489,37 @@ func TestHLT(t *testing.T) {
 	testCase.Assert()
 }
 
+func TestSetupFuncCall(t *testing.T) {
+	var SUM_3_NUMBER_FUNCTION uint64 = 13
+	var SUM_2_NUMBER_FUNCTION uint64 = 18
+	testCase := MakeTestCase(t)
+	testCase.AddStep(MakePUSH(0))
+	testCase.AddStep(MakePUSH(1))
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakePUSH(3))
+	testCase.AddStep(MakeCALL(SUM_3_NUMBER_FUNCTION))
+	testCase.AddStep(MakePUSH(4))
+	testCase.AddStep(MakePUSH(5))
+	testCase.AddStep(MakePUSH(3))
+	testCase.AddStep(MakeCALL(SUM_3_NUMBER_FUNCTION))
+	testCase.AddStep(MakePUSH(3))
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakeCALL(SUM_2_NUMBER_FUNCTION))
+	testCase.AddStep(MakeHLT())
+
+	testCase.AddStep(MakePUSH(2)) // Sum (a + b + c)
+	testCase.AddStep(MakeCALL(SUM_2_NUMBER_FUNCTION))
+	testCase.AddStep(MakePUSH(2))
+	testCase.AddStep(MakeCALL(SUM_2_NUMBER_FUNCTION))
+	testCase.AddStep(MakeRET())
+
+	testCase.AddStep(MakeADD()) // Sum (a + b)
+	testCase.AddStep(MakeRET())
+
+	testCase.AddStackTest(0, 15)
+	testCase.Assert()
+}
+
 // Calculate sum from 1 -> n
 // Write the result to the ten
 func TestSumFrom1ToN(t *testing.T) {
