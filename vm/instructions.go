@@ -247,10 +247,13 @@ func MakeSSTORE() uint64 {
 	return opcode
 }
 
-func MakeCALL() uint64 {
+func MakeCALL(label uint64) uint64 {
+	label = label << 8
+	label = label >> 8
 	var opcode uint64 = uint64(CALL)
 	opcode = opcode << 56
-	return opcode
+	label = label | opcode
+	return label
 }
 
 func MakeRET() uint64 {
