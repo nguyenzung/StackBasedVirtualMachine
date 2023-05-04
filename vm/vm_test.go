@@ -571,10 +571,10 @@ func TestSumFrom1ToN(t *testing.T) {
 	testCase.AddStep(MakeHLT())
 
 	// Result is 0x07a314 = 500500
-	testCase.AddMemoryTest(0, 0x14)
-	testCase.AddMemoryTest(1, 0xa3)
-	testCase.AddMemoryTest(2, 0x07)
-	testCase.AddMemoryTest(3, 0x00)
+	testCase.AddMemoryTest(uint32(sumSlot), 0x14)
+	testCase.AddMemoryTest(uint32(sumSlot+1), 0xa3)
+	testCase.AddMemoryTest(uint32(sumSlot+2), 0x07)
+	testCase.AddMemoryTest(uint32(sumSlot+3), 0x00)
 	// testCase.AddMemoryTest(8, 201)
 	// testCase.AddMemoryTest(9, 200)
 	testCase.AddMemoryTest(10, 0)
