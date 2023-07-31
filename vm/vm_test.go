@@ -542,7 +542,7 @@ func TestSumFrom1ToN(t *testing.T) {
 	testCase.AddStep(MakePUSH(iSlot))
 	testCase.AddStep(MakeSTORE())
 
-	/*Setup memory at 9 for n variable*/
+	/*Setup memory at 16 for n variable*/
 	testCase.AddStep(MakePUSH(1000))
 	testCase.AddStep(MakePUSH(nSlot))
 	testCase.AddStep(MakeSTORE())
@@ -575,6 +575,10 @@ func TestSumFrom1ToN(t *testing.T) {
 	testCase.AddMemoryTest(uint32(sumSlot+1), 0xa3)
 	testCase.AddMemoryTest(uint32(sumSlot+2), 0x07)
 	testCase.AddMemoryTest(uint32(sumSlot+3), 0x00)
+	testCase.AddMemoryTest(uint32(sumSlot+4), 0x00)
+	testCase.AddMemoryTest(uint32(sumSlot+5), 0x00)
+	testCase.AddMemoryTest(uint32(sumSlot+6), 0x00)
+	testCase.AddMemoryTest(uint32(sumSlot+7), 0x00)
 	// testCase.AddMemoryTest(8, 201)
 	// testCase.AddMemoryTest(9, 200)
 	testCase.AddMemoryTest(10, 0)
